@@ -40,6 +40,7 @@ class Node:
 
 
 if __name__ == "__main__":
+    # for checking
     node1 = Node('1')
     node2 = Node('2')
     node1.run()
