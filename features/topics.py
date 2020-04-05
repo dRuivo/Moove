@@ -40,7 +40,7 @@ class PubTopic(socketio.ClientNamespace):
         super(PubTopic, self).__init__(namespace=namespace)
         self.definition = definition
 
-    def on_connect(self, environ):
+    def on_connect(self):
         self.emit('publisher', {'definition': self.definition})
 
     def on_disconnect(self):
@@ -52,7 +52,7 @@ class SubTopic(socketio.ClientNamespace):
         super(SubTopic, self).__init__(namespace=namespace)
         self.topic_callback = callback
 
-    def on_connect(self, environ):
+    def on_connect(self):
         self.emit('subscriber', None)
 
     def on_disconnect(self):

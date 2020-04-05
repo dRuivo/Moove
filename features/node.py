@@ -40,6 +40,9 @@ class Node:
     def on_message(self, data):
         print('message ', data)
 
+    def register_topic(self, topic):
+        self.sio.register_namespace(topic)
+
 
 if __name__ == "__main__":
     # for checking

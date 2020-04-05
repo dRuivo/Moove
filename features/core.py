@@ -7,20 +7,10 @@ import logging
 
 if __name__ == "__main__":
     from topics import ServerTopic
+    from core_data import DataHandler
 else:
     from features.topics import ServerTopic
-
-class DataHandler:
-    def __init__(self):
-        self.topics = {}
-        self.node_list = []
-
-    def add_node(self, sid, node_name):
-        self.node_list.append((node_name, sid))
-
-    def add_to_topic(self, name, publisher=None, subscriber=None):
-        pass
-
+    from features.core_data import DataHandler
 
 class Base(socketio.Namespace):
     def __init__(self, parent=None):
@@ -28,7 +18,8 @@ class Base(socketio.Namespace):
         self.parent = parent
 
     def on_connect(self, sid, environ):
-        print('connect ', sid)
+        # print('connect ', sid)
+        pass
 
     def on_identify(self, sid, data):
         print('connected to ', data)
@@ -47,16 +38,13 @@ class Core:
         self.sio = socketio.Server()
         self.app = socketio.WSGIApp(self.sio)
 
-        self.data = DataHandler()
+        self.data = DataHandler(parent=self)
         self.add_node = self.data.add_node
-
+        
+        self.sio.register_namespace(self.data)
         self.sio.register_namespace(Base(parent=self))
 
-    def run(self, port=5000):
-        eventlet.wsgi.server(eventlet.listen(('', port)), self.app)
 
-if __name__ == '__main__':
-    core = Core()
-    core.run()
-    
+    def run(self, port=5000):
+        eventlet.wsgi.server(eventlet.listen(('', port)), self.app, debug=True)    
     
