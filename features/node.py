@@ -1,6 +1,10 @@
 import socketio
 from threading import Thread
-from topics import PubTopic
+
+if __name__ == "__main__":
+    from topics import ServerTopic
+else:
+    from features.topics import ServerTopic
 
 class Base(socketio.ClientNamespace):
     def __init__(self, parent=None):

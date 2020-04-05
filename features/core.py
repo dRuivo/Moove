@@ -4,7 +4,11 @@ import socketio
 from threading import Thread
 import time
 import logging
-from topics import ServerTopic
+
+if __name__ == "__main__":
+    from topics import ServerTopic
+else:
+    from features.topics import ServerTopic
 
 class DataHandler:
     def __init__(self):
@@ -36,16 +40,17 @@ class Base(socketio.Namespace):
 
     def on_register(self, data):
         pass
-    
 
+    
 class Core:
     def __init__(self):
         self.sio = socketio.Server()
         self.app = socketio.WSGIApp(self.sio)
 
         self.data = DataHandler()
+        self.add_node = self.data.add_node
 
-        self.sio.register_namespace(Base())
+        self.sio.register_namespace(Base(parent=self))
 
     def run(self, port=5000):
         eventlet.wsgi.server(eventlet.listen(('', port)), self.app)
