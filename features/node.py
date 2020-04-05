@@ -10,23 +10,21 @@ class Base(socketio.ClientNamespace):
     def on_connect(self):
         if self.parent:
             print(self.parent.name, ' connected')
+            self.emit('identify', self.parent.name)
 
     def on_disconnect(self):
         if self.parent:
             print(self.parent.name, ' disconnected')
 
-    def on_identify(self, data=None):
-        if self.parent:
-            return self.parent.name
-        return None
-
     def on_message(self, data):
         self.parent.on_message(data)
 
 class Node:
+    """
+
+    """
     def __init__(self, name=''):
         self.name = name
-
         self.sio = socketio.Client()
         self.sio.register_namespace(Base(self))
 

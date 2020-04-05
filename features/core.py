@@ -6,6 +6,17 @@ import time
 import logging
 from topics import ServerTopic
 
+class DataHandler:
+    def __init__(self):
+        self.topics = {}
+        self.node_list = []
+
+    def add_node(self, sid, node_name):
+        self.node_list.append((node_name, sid))
+
+    def add_to_topic(self, name, publisher=None, subscriber=None):
+        pass
+
 
 class Base(socketio.Namespace):
     def __init__(self, parent=None):
@@ -13,11 +24,11 @@ class Base(socketio.Namespace):
         self.parent = parent
 
     def on_connect(self, sid, environ):
-        self.emit('identify', room=sid, callback=self.got_identity)
         print('connect ', sid)
 
-    def got_identity(self, data):
+    def on_identify(self, sid, data):
         print('connected to ', data)
+        self.parent.add_node(sid, data)
         #TODO keep track of who's connected
 
     def on_disconnect(self, sid):
@@ -31,6 +42,8 @@ class Core:
     def __init__(self):
         self.sio = socketio.Server()
         self.app = socketio.WSGIApp(self.sio)
+
+        self.data = DataHandler()
 
         self.sio.register_namespace(Base())
 
